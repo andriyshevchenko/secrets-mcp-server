@@ -8,6 +8,28 @@ import {
 } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
 import { Entry, findCredentials } from "@napi-rs/keyring";
+import { readFileSync } from "fs";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
+
+// Get package.json path and read version
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const packageJsonPath = join(__dirname, "../package.json");
+
+let VERSION = "0.0.0"; // Default fallback version
+try {
+  const packageJson = JSON.parse(
+    readFileSync(packageJsonPath, "utf-8")
+  );
+  if (typeof packageJson.version === "string" && packageJson.version) {
+    VERSION = packageJson.version;
+  } else {
+    console.error(`[VERSION] Warning: package.json at ${packageJsonPath} does not contain a valid version string (expected non-empty string, got: ${typeof packageJson.version}), using fallback version ${VERSION}`);
+  }
+} catch (error) {
+  console.error(`[VERSION] Warning: Failed to read version from package.json at ${packageJsonPath}, using fallback version ${VERSION}:`, error);
+}
 
 // Define the service name for all secrets
 const SERVICE_NAME = "secrets-mcp-server";
@@ -30,7 +52,7 @@ const DeleteSecretSchema = z.object({
 const server = new Server(
   {
     name: "secrets-mcp-server",
-    version: "1.0.0",
+    version: VERSION,
   },
   {
     capabilities: {

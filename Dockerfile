@@ -31,6 +31,16 @@ RUN npm prune --omit=dev
 # Stage 2: Production
 FROM node:20-slim
 
+# Build argument for version
+ARG VERSION=unknown
+
+# Add OCI labels for image metadata
+LABEL org.opencontainers.image.title="secrets-mcp-server"
+LABEL org.opencontainers.image.description="Enable your AI to securely and platform-independently store and retrieve Secrets"
+LABEL org.opencontainers.image.version="${VERSION}"
+LABEL org.opencontainers.image.source="https://github.com/andriyshevchenko/secrets-mcp-server"
+LABEL org.opencontainers.image.licenses="ISC"
+
 # Install only runtime dependencies
 RUN apt-get update && apt-get install -y \
     libsecret-1-0 \
