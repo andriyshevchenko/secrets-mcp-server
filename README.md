@@ -123,6 +123,8 @@ To use this server with an MCP client (like Claude Desktop), add it to your MCP 
 
 Add to your `claude_desktop_config.json`:
 
+#### Using npx (recommended for quick start):
+
 ```json
 {
   "mcpServers": {
@@ -134,7 +136,35 @@ Add to your `claude_desktop_config.json`:
 }
 ```
 
-Or if installed globally:
+#### Using Docker with persistent volume:
+
+First, create a named volume for persistent secret storage:
+
+```bash
+docker volume create secrets-mcp-data
+```
+
+Then add to your `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "secrets": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-v",
+        "secrets-mcp-data:/root/.local/share/keyrings",
+        "secrets-mcp-server"
+      ]
+    }
+  }
+}
+```
+
+#### Using globally installed package:
 
 ```json
 {
@@ -150,6 +180,8 @@ Or if installed globally:
 
 VS Code with GitHub Copilot supports MCP servers. Add to your `.vscode/mcp.json` file in your workspace:
 
+#### Using npx (recommended for quick start):
+
 ```json
 {
   "servers": {
@@ -162,7 +194,36 @@ VS Code with GitHub Copilot supports MCP servers. Add to your `.vscode/mcp.json`
 }
 ```
 
-Or if installed globally:
+#### Using Docker with persistent volume:
+
+First, create a named volume for persistent secret storage:
+
+```bash
+docker volume create secrets-mcp-data
+```
+
+Then add to your `.vscode/mcp.json`:
+
+```json
+{
+  "servers": {
+    "secrets": {
+      "type": "stdio",
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-v",
+        "secrets-mcp-data:/root/.local/share/keyrings",
+        "secrets-mcp-server"
+      ]
+    }
+  }
+}
+```
+
+#### Using globally installed package:
 
 ```json
 {
