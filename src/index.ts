@@ -8,6 +8,17 @@ import {
 } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
 import { Entry, findCredentials } from "@napi-rs/keyring";
+import { readFileSync } from "fs";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
+
+// Get package.json path and read version
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const packageJson = JSON.parse(
+  readFileSync(join(__dirname, "../package.json"), "utf-8")
+);
+const VERSION = packageJson.version;
 
 // Define the service name for all secrets
 const SERVICE_NAME = "secrets-mcp-server";
@@ -30,7 +41,7 @@ const DeleteSecretSchema = z.object({
 const server = new Server(
   {
     name: "secrets-mcp-server",
-    version: "1.0.0",
+    version: VERSION,
   },
   {
     capabilities: {
