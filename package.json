@@ -1,0 +1,38 @@
+{
+  "name": "secrets-mcp-server",
+  "version": "1.0.0",
+  "description": "Enable your AI to securely and platform-independently (Windows, Mac, Linux) store and retrieve Secrets",
+  "type": "module",
+  "main": "./build/index.js",
+  "bin": {
+    "secrets-mcp-server": "./build/index.js"
+  },
+  "files": [
+    "build"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "start": "node build/index.js",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "secrets",
+    "keychain",
+    "dpapi",
+    "credential-vault",
+    "secret-service"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.25.2",
+    "@napi-rs/keyring": "^1.2.0",
+    "zod": "^4.3.5"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.9",
+    "typescript": "^5.9.3"
+  }
+}
