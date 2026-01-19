@@ -1,9 +1,8 @@
-# Use Node.js LTS as base image
-FROM node:20-slim
+# Stage 1: Builder
+FROM node:20-slim AS builder
 
-# Install system dependencies for @napi-rs/keyring on Linux
+# Install build dependencies
 RUN apt-get update && apt-get install -y \
-    libsecret-1-0 \
     libsecret-1-dev \
     python3 \
     make \
@@ -13,14 +12,39 @@ RUN apt-get update && apt-get install -y \
 # Set working directory
 WORKDIR /app
 
-# Copy all necessary files
-COPY package.json tsconfig.json ./
+# Copy package files
+COPY package.json ./
+
+# Install all dependencies (including devDependencies for build)
+RUN npm install
+
+# Copy source code
+COPY tsconfig.json ./
 COPY src ./src
 
-# Install dependencies and build
-RUN npm install && \
-    npm run build && \
-    npm prune --omit=dev
+# Build TypeScript code
+RUN npm run build
+
+# Remove devDependencies
+RUN npm prune --omit=dev
+
+# Stage 2: Production
+FROM node:20-slim
+
+# Install only runtime dependencies
+RUN apt-get update && apt-get install -y \
+    libsecret-1-0 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY package.json ./
+
+# Copy built code and production dependencies from builder
+COPY --from=builder /app/build ./build
+COPY --from=builder /app/node_modules ./node_modules
 
 # Set environment
 ENV NODE_ENV=production
