@@ -1,5 +1,7 @@
 # secrets-mcp-server
 
+[![CI](https://github.com/andriyshevchenko/secrets-mcp-server/actions/workflows/ci.yml/badge.svg)](https://github.com/andriyshevchenko/secrets-mcp-server/actions/workflows/ci.yml)
+
 A Model Context Protocol (MCP) server that enables AI agents to securely store and retrieve secrets using native operating system APIs.
 
 ## Features
@@ -188,7 +190,41 @@ npm run build
 
 # Run locally
 npm start
+
+# Run tests
+npm test              # Run all tests
+npm run test:unit     # Run unit tests only
+npm run test:e2e      # Run e2e tests only
+npm run test:coverage # Run tests with coverage
+
+# Linting
+npm run lint          # Check for lint errors
+npm run lint:fix      # Fix lint errors automatically
 ```
+
+## Testing
+
+The project includes comprehensive test coverage:
+
+- **Unit Tests**: Test the @napi-rs/keyring integration for storing, retrieving, and deleting secrets
+- **E2E Tests**: Test the MCP server protocol implementation end-to-end
+
+Run tests with:
+```bash
+npm test
+```
+
+## CI/CD
+
+The project uses GitHub Actions for continuous integration:
+
+- **Lint**: Checks code quality with ESLint
+- **Build**: Compiles TypeScript to JavaScript
+- **Test**: Runs unit and e2e tests with coverage
+- **Docker Build**: Builds and validates Docker image
+- **Publish**: Automatically publishes to Docker Hub on main branch
+
+The CI workflow runs on all branches for push and pull request events.
 
 ## License
 

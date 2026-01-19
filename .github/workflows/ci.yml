@@ -63,9 +63,10 @@ jobs:
           cache: 'npm'
       
       - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libsecret-1-0 libsecret-1-dev
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: libsecret-1-0 libsecret-1-dev
+          version: 1.0
       
       - name: Install dependencies
         run: npm ci

@@ -283,8 +283,12 @@ describe('MCP Server E2E Tests', () => {
       });
 
       expect(response.result).toBeDefined();
-      // Should contain validation error
-      expect(response.result.isError || response.result.content[0].text.includes('Error')).toBeTruthy();
+      // Should contain validation error - check for error flag or error text
+      const hasErrorFlag = response.result.isError === true;
+      const hasErrorText = response.result.content && 
+                          response.result.content[0] && 
+                          response.result.content[0].text.includes('Error');
+      expect(hasErrorFlag || hasErrorText).toBeTruthy();
     });
   });
 });
