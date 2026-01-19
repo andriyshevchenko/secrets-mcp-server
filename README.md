@@ -175,9 +175,9 @@ Or if installed globally:
 }
 ```
 
-**Note**: For user-wide configuration, you can also place the `mcp.json` file in your user profile directory (e.g., `~/.mcp.json` on macOS/Linux or `%USERPROFILE%\.mcp.json` on Windows).
-
 ## Security Considerations
+
+- Secrets are stored using the operating system's native credential management system
 
 - Secrets are stored using the operating system's native credential management system
 - Access is restricted to the current user account
