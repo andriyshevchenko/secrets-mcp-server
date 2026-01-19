@@ -146,7 +146,38 @@ Or if installed globally:
 }
 ```
 
+### VS Code Configuration
+
+VS Code with GitHub Copilot supports MCP servers. Add to your `.vscode/mcp.json` file in your workspace:
+
+```json
+{
+  "servers": {
+    "secrets": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "secrets-mcp-server"]
+    }
+  }
+}
+```
+
+Or if installed globally:
+
+```json
+{
+  "servers": {
+    "secrets": {
+      "type": "stdio",
+      "command": "secrets-mcp-server"
+    }
+  }
+}
+```
+
 ## Security Considerations
+
+- Secrets are stored using the operating system's native credential management system
 
 - Secrets are stored using the operating system's native credential management system
 - Access is restricted to the current user account
