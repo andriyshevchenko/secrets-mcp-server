@@ -118,12 +118,18 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       
+      - name: Extract version from package.json
+        id: package-version
+        run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+      
       - name: Build Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           push: false
           tags: secrets-mcp-server:test
+          build-args: |
+            VERSION=${{ steps.package-version.outputs.version }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -169,5 +175,7 @@ jobs:
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/secrets-mcp-server:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/secrets-mcp-server:${{ steps.package-version.outputs.version }}
+          build-args: |
+            VERSION=${{ steps.package-version.outputs.version }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
