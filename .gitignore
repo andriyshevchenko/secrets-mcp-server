@@ -3,3 +3,5 @@ build/
 *.log
 .DS_Store
 integration-test.mjs
+coverage/
+.vitest/
