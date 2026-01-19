@@ -15,10 +15,20 @@ import { dirname, join } from "path";
 // Get package.json path and read version
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const packageJson = JSON.parse(
-  readFileSync(join(__dirname, "../package.json"), "utf-8")
-);
-const VERSION = packageJson.version;
+
+let VERSION = "0.0.0"; // Default fallback version
+try {
+  const packageJson = JSON.parse(
+    readFileSync(join(__dirname, "../package.json"), "utf-8")
+  );
+  if (typeof packageJson.version === "string" && packageJson.version) {
+    VERSION = packageJson.version;
+  } else {
+    console.error("Warning: package.json does not contain a valid version string, using fallback version");
+  }
+} catch (error) {
+  console.error("Warning: Failed to read version from package.json, using fallback version:", error);
+}
 
 // Define the service name for all secrets
 const SERVICE_NAME = "secrets-mcp-server";
