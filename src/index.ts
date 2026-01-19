@@ -237,11 +237,24 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             ],
           };
         } catch (error) {
+          // On some platforms (especially Linux in certain environments), 
+          // listing credentials may fail due to permission restrictions
+          const errorMessage = error instanceof Error ? error.message : String(error);
+          if (errorMessage.includes('Permission denied') || errorMessage.includes('DBus')) {
+            return {
+              content: [
+                {
+                  type: "text",
+                  text: "Listing secrets is not available in this environment due to system permissions. This is a known limitation on some Linux systems with restrictive DBus/Secret Service configurations. Secrets can still be stored and retrieved individually by key.",
+                },
+              ],
+            };
+          }
           return {
             content: [
               {
                 type: "text",
-                text: `Failed to list secrets: ${error instanceof Error ? error.message : String(error)}`,
+                text: `Failed to list secrets: ${errorMessage}`,
               },
             ],
             isError: true,

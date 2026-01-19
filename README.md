@@ -97,6 +97,8 @@ List all secret keys (identifiers) stored by this server. Note: This returns onl
 
 **Parameters:** None
 
+**Note:** On some Linux systems with restrictive DBus or Secret Service configurations, this operation may not be available due to system permission restrictions. In such cases, secrets can still be stored and retrieved individually by key.
+
 ## Docker Deployment
 
 Build and run using Docker:
