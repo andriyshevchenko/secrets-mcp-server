@@ -337,17 +337,17 @@ async function main() {
 
   // Handle graceful shutdown
   process.on("SIGTERM", () => {
-    console.error("SIGTERM received, closing server...");
+    console.log("SIGTERM received, closing server...");
     httpServer.close(() => {
-      console.error("Server closed");
+      console.log("Server closed");
       process.exit(0);
     });
   });
 
   process.on("SIGINT", () => {
-    console.error("SIGINT received, closing server...");
+    console.log("SIGINT received, closing server...");
     httpServer.close(() => {
-      console.error("Server closed");
+      console.log("Server closed");
       process.exit(0);
     });
   });
