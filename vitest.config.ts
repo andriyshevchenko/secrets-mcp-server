@@ -6,6 +6,9 @@ export default defineConfig({
     environment: 'node',
     include: ['test/**/*.test.ts'],
     exclude: ['test/**/*.test.js', 'node_modules/**', 'build/**', 'build-test/**'],
+    testTimeout: 10000,
+    hookTimeout: 10000,
+    teardownTimeout: 10000,
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],

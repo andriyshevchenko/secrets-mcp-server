@@ -111,8 +111,17 @@ class MCPTestClient {
 
   async stop(): Promise<void> {
     if (this.server) {
-      this.server.kill();
+      this.server.kill('SIGTERM');
+      // Give it a moment to terminate gracefully
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      // Force kill if still alive
+      if (!this.server.killed) {
+        this.server.kill('SIGKILL');
+      }
+      
       this.server = null;
+      this.pendingRequests.clear();
     }
   }
 }
