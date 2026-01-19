@@ -331,8 +331,8 @@ async function main() {
 
   // Start listening
   httpServer.listen(PORT, HOST, () => {
-    console.error(`Secrets MCP Server running on http://${HOST}:${PORT}`);
-    console.error(`Environment: ${process.env.NODE_ENV || "development"}`);
+    console.log(`Secrets MCP Server running on http://${HOST}:${PORT}`);
+    console.log(`Environment: ${process.env.NODE_ENV || "development"}`);
   });
 
   // Handle graceful shutdown

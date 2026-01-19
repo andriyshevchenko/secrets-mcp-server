@@ -34,32 +34,41 @@ class MCPHTTPTestClient {
   async start(): Promise<void> {
     return new Promise((resolve, reject) => {
       const serverPath = join(__dirname, '../../build/http-server.js');
+      let serverStarted = false;
+      let resolved = false;
       
       this.server = spawn('node', [serverPath], {
         stdio: ['pipe', 'pipe', 'pipe'],
         env: { ...process.env, PORT: this.port.toString(), HOST: 'localhost' }
       });
 
-      if (!this.server.stderr) {
+      if (!this.server.stdout || !this.server.stderr) {
         reject(new Error('Failed to create server process'));
         return;
       }
 
-      this.server.stderr.on('data', (data) => {
+      // Listen to stdout for startup message
+      this.server.stdout.on('data', (data) => {
         const message = data.toString();
-        if (message.includes('MCP Server running')) {
+        if (message.includes('MCP Server running') && !resolved) {
+          resolved = true;
+          serverStarted = true;
           // Give server a moment to be fully ready
           setTimeout(() => resolve(), 200);
         }
       });
 
-      this.server.on('error', reject);
+      this.server.on('error', (err) => {
+        if (!resolved) {
+          resolved = true;
+          reject(err);
+        }
+      });
 
       // Timeout if server doesn't start
       setTimeout(() => {
-        if (this.server) {
-          resolve(); // Optimistically resolve
-        } else {
+        if (!serverStarted && !resolved) {
+          resolved = true;
           reject(new Error('Server startup timeout'));
         }
       }, 2000);
@@ -67,7 +76,7 @@ class MCPHTTPTestClient {
   }
 
   async sendRequest(method: string, params: Record<string, unknown> = {}): Promise<JsonRpcResponse> {
-    const id = Math.floor(Math.random() * 1000000);
+    const id = Date.now() + Math.floor(Math.random() * 1000); // More unique IDs combining timestamp and random
     const request: JsonRpcRequest = {
       jsonrpc: '2.0',
       id,
