@@ -5,19 +5,22 @@ FROM node:20-slim
 RUN apt-get update && apt-get install -y \
     libsecret-1-0 \
     libsecret-1-dev \
+    python3 \
+    make \
+    g++ \
     && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# Copy all necessary files
+COPY package.json tsconfig.json ./
+COPY src ./src
 
-# Install dependencies
-RUN npm ci --only=production
-
-# Copy built files
-COPY build ./build
+# Install dependencies and build
+RUN npm install && \
+    npm run build && \
+    npm prune --omit=dev
 
 # Set environment
 ENV NODE_ENV=production

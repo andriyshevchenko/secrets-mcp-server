@@ -1,8 +1,13 @@
 node_modules
-src
+test
 *.md
 .git
 .gitignore
-tsconfig.json
 Dockerfile
 .dockerignore
+coverage
+.vitest
+build-test
+*.log
+.DS_Store
+package-lock.json
