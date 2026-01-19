@@ -6,10 +6,15 @@ on:
   pull_request:
     branches: ['**']
 
+permissions:
+  contents: read
+
 jobs:
   lint:
     name: Lint
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
       
@@ -28,6 +33,8 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
       
@@ -53,6 +60,8 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     needs: build
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
       
@@ -90,6 +99,8 @@ jobs:
     name: Docker Build
     runs-on: ubuntu-latest
     needs: [lint, build, test]
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
       
@@ -121,6 +132,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: [lint, build, test, docker-build]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
       
