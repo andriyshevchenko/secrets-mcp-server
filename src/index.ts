@@ -25,10 +25,10 @@ try {
   if (typeof packageJson.version === "string" && packageJson.version) {
     VERSION = packageJson.version;
   } else {
-    console.error(`Warning: package.json at ${packageJsonPath} does not contain a valid version string (expected non-empty string, got: ${typeof packageJson.version}), using fallback version ${VERSION}`);
+    console.error(`[VERSION] Warning: package.json at ${packageJsonPath} does not contain a valid version string (expected non-empty string, got: ${typeof packageJson.version}), using fallback version ${VERSION}`);
   }
 } catch (error) {
-  console.error(`Warning: Failed to read version from package.json at ${packageJsonPath}, using fallback version ${VERSION}:`, error);
+  console.error(`[VERSION] Warning: Failed to read version from package.json at ${packageJsonPath}, using fallback version ${VERSION}:`, error);
 }
 
 // Define the service name for all secrets
