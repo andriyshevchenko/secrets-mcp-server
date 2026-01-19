@@ -5,7 +5,8 @@
   "type": "module",
   "main": "./build/index.js",
   "bin": {
-    "secrets-mcp-server": "./build/index.js"
+    "secrets-mcp-server": "./build/index.js",
+    "secrets-mcp-server-http": "./build/http-server.js"
   },
   "files": [
     "build"
@@ -13,6 +14,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node build/index.js",
+    "start:http": "node build/http-server.js",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",

@@ -35,6 +35,10 @@ npm run build
 
 ### Running the Server
 
+The server supports two transport modes: **stdio** (default) and **HTTP**.
+
+#### Stdio Transport (Default)
+
 ```bash
 # If installed globally
 secrets-mcp-server
@@ -43,7 +47,43 @@ secrets-mcp-server
 npm start
 ```
 
-The server communicates via stdio, following the Model Context Protocol standard.
+The server communicates via stdio, following the Model Context Protocol standard. This is the recommended mode for local development and integration with tools like Claude Desktop.
+
+#### HTTP Transport
+
+```bash
+# If installed globally
+secrets-mcp-server-http
+
+# If running from source
+npm run start:http
+```
+
+The HTTP server listens on `http://localhost:3000` by default. You can configure the port and host using environment variables:
+
+```bash
+# Custom port and host
+PORT=8080 HOST=0.0.0.0 secrets-mcp-server-http
+```
+
+The HTTP transport implements the MCP Streamable HTTP specification with JSON responses, supporting:
+- **Session Management**: Each client gets a unique session ID for request tracking
+- **CORS Support**: Enabled for development and testing
+- **RESTful API**: Standard HTTP POST requests with JSON-RPC 2.0 payloads
+
+**HTTP Request Example:**
+```bash
+curl -X POST http://localhost:3000 \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -H "MCP-Protocol-Version: 2024-11-05" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/list",
+    "params": {}
+  }'
+```
 
 ### Available Tools
 
@@ -119,7 +159,7 @@ docker run -i secrets-mcp-server
 
 To use this server with an MCP client (like Claude Desktop), add it to your MCP configuration:
 
-### Claude Desktop Configuration
+### Claude Desktop Configuration (Stdio Transport)
 
 Add to your `claude_desktop_config.json`:
 
@@ -146,6 +186,26 @@ Or if installed globally:
 }
 ```
 
+### HTTP Transport Configuration
+
+If you prefer to use the HTTP transport (for example, when running the server as a standalone service or in a containerized environment), you can configure your MCP client to connect to the HTTP endpoint:
+
+```json
+{
+  "mcpServers": {
+    "secrets": {
+      "url": "http://localhost:3000"
+    }
+  }
+}
+```
+
+**Note:** HTTP transport support depends on your MCP client. Some clients may only support stdio transport. The HTTP transport is useful for:
+- Running the server as a standalone microservice
+- Accessing the server from multiple clients simultaneously
+- Deploying in containerized or cloud environments
+- Integration with web-based applications
+
 ## Security Considerations
 
 - Secrets are stored using the operating system's native credential management system
@@ -153,6 +213,16 @@ Or if installed globally:
 - On Windows, secrets are encrypted with DPAPI using user or machine-specific keys
 - On macOS, secrets are protected by the Keychain's security model
 - On Linux, secrets are managed by the Secret Service API with encryption
+
+### HTTP Transport Security
+
+When using the HTTP transport:
+- The server binds to `localhost` by default, restricting access to the local machine
+- CORS is enabled for development; consider restricting it in production environments
+- Session IDs are randomly generated UUIDs for request tracking
+- Consider using HTTPS/TLS when exposing the server over a network
+- Implement authentication middleware for production deployments
+- The HTTP transport is best suited for local or trusted network environments
 
 ## Requirements
 
