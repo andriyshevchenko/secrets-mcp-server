@@ -16,7 +16,7 @@ A Model Context Protocol (MCP) server that enables AI agents to securely store a
 
 ## Installation
 
-### From npm (once published)
+### From npm
 
 ```bash
 npm install -g secrets-mcp-server
