@@ -130,7 +130,7 @@ Add to your `claude_desktop_config.json`:
   "mcpServers": {
     "secrets": {
       "command": "npx",
-      "args": ["-y", "secrets-mcp-server"]
+      "args": ["-y", "@mcborov01/secrets-mcp-server"]
     }
   }
 }
@@ -188,7 +188,7 @@ VS Code with GitHub Copilot supports MCP servers. Add to your `.vscode/mcp.json`
     "secrets": {
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "secrets-mcp-server"]
+      "args": ["-y", "@mcborov01/secrets-mcp-server"]
     }
   }
 }
