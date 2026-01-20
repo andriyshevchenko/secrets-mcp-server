@@ -27,45 +27,66 @@ jobs:
       
       - name: Check version bump
         run: |
-          # Get current version from PR branch
-          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          # Compare versions using Node.js
+          node << 'EOF'
+          const fs = require('fs');
+          const { execSync } = require('child_process');
           
-          # Get version from main branch
-          MAIN_VERSION=$(git show origin/main:package.json | node -p "const fs=require('fs'); const pkg=JSON.parse(fs.readFileSync('/dev/stdin','utf-8')); pkg.version")
+          // Get current version
+          const currentPkg = JSON.parse(fs.readFileSync('./package.json', 'utf-8'));
+          const currentVersion = currentPkg.version;
           
-          echo "Current PR version: $CURRENT_VERSION"
-          echo "Main branch version: $MAIN_VERSION"
+          // Get main branch version
+          const mainPkgJson = execSync('git show origin/main:package.json', { encoding: 'utf-8' });
+          const mainPkg = JSON.parse(mainPkgJson);
+          const mainVersion = mainPkg.version;
           
-          # Compare versions using node semver comparison
-          VERSION_INCREASED=$(node -e "
-            const current = '$CURRENT_VERSION'.split('.').map(Number);
-            const main = '$MAIN_VERSION'.split('.').map(Number);
-            
-            for (let i = 0; i < 3; i++) {
-              if (current[i] > main[i]) {
-                console.log('true');
-                process.exit(0);
-              } else if (current[i] < main[i]) {
-                console.log('false');
-                process.exit(0);
-              }
+          console.log(`Current PR version: ${currentVersion}`);
+          console.log(`Main branch version: ${mainVersion}`);
+          
+          // Parse versions (handle major.minor.patch format)
+          const parseVersion = (version) => {
+            const match = version.match(/^(\d+)\.(\d+)\.(\d+)/);
+            if (!match) {
+              throw new Error(`Invalid version format: ${version}`);
             }
-            console.log('false');
-          ")
+            return [parseInt(match[1]), parseInt(match[2]), parseInt(match[3])];
+          };
           
-          if [ "$VERSION_INCREASED" != "true" ]; then
-            echo "❌ Error: Version must be increased before merging to main."
-            echo "Current version: $CURRENT_VERSION"
-            echo "Main branch version: $MAIN_VERSION"
-            echo ""
-            echo "Please update the version in package.json using npm version:"
-            echo "  npm version patch  # for bug fixes (1.0.0 -> 1.0.1)"
-            echo "  npm version minor  # for new features (1.0.0 -> 1.1.0)"
-            echo "  npm version major  # for breaking changes (1.0.0 -> 2.0.0)"
-            exit 1
-          fi
+          let current, main;
+          try {
+            current = parseVersion(currentVersion);
+            main = parseVersion(mainVersion);
+          } catch (error) {
+            console.error(`❌ Error: ${error.message}`);
+            process.exit(1);
+          }
           
-          echo "✅ Version has been increased from $MAIN_VERSION to $CURRENT_VERSION"
+          // Compare versions
+          let versionIncreased = false;
+          for (let i = 0; i < 3; i++) {
+            if (current[i] > main[i]) {
+              versionIncreased = true;
+              break;
+            } else if (current[i] < main[i]) {
+              break;
+            }
+          }
+          
+          if (!versionIncreased) {
+            console.error('❌ Error: Version must be increased before merging to main.');
+            console.error(`Current version: ${currentVersion}`);
+            console.error(`Main branch version: ${mainVersion}`);
+            console.error('');
+            console.error('Please update the version in package.json using npm version:');
+            console.error('  npm version patch  # for bug fixes (1.0.0 -> 1.0.1)');
+            console.error('  npm version minor  # for new features (1.0.0 -> 1.1.0)');
+            console.error('  npm version major  # for breaking changes (1.0.0 -> 2.0.0)');
+            process.exit(1);
+          }
+          
+          console.log(`✅ Version has been increased from ${mainVersion} to ${currentVersion}`);
+          EOF
 
   lint:
     name: Lint
